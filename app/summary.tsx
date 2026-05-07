@@ -26,6 +26,7 @@ import { useAnalytics } from "../hooks/useAnalytics"; // ← AJOUT Phase 17
 import { useDeleteHistory } from "../hooks/useDeleteHistory";
 import { useHistoryStore } from "../store/historyStore";
 import { ImportTextButton } from "../components/ImportTextButton"; // ← AJOUT
+import { ShareButton } from "../components/ShareButton";
 
 
 const CACHE_KEY = "studyai_summaries";
@@ -408,7 +409,7 @@ export default function SummaryScreen() {
               borderRightWidth: isRTL ? 4 : 0,
               borderLeftColor: "#6366F1",
               borderRightColor: "#6366F1",
-            }}>
+            }} >
               <Text style={{
                 fontSize: 14, fontWeight: "700", color: "#3730A3", marginBottom: 8,
                 textAlign: isRTL ? "right" : "left",
@@ -423,6 +424,15 @@ export default function SummaryScreen() {
                 {summary}
               </Text>
             </View>
+
+            <ShareButton
+      content={summary}
+      title={currentLanguage === "ar" ? "📋 ملخص — StudyAI"
+        : currentLanguage === "en" ? "📋 Summary — StudyAI"
+        : "📋 Résumé — StudyAI"}
+      currentLanguage={currentLanguage}
+      isRTL={isRTL}
+    />
 
             {/* Actions */}
             <View style={{ flexDirection: isRTL ? "row-reverse" : "row", gap: 12 }}>
