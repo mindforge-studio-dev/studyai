@@ -28,6 +28,7 @@ import { useDeleteHistory } from "../hooks/useDeleteHistory";
 import { useHistoryStore } from "../store/historyStore";
 import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
+import { Share, Clipboard } from "react-native";
 
 const CACHE_KEY = "studyai_chatSessions";
 const PAGE_SIZE = 5;
@@ -623,6 +624,22 @@ useFocusEffect(
               {t("chat_limited")}
             </Text>
           </View>
+
+           {/* Bouton Partager */}
+  <TouchableOpacity
+    onPress={async () => {
+      const content = messages
+        .filter((m) => m.role !== "assistant" || !m.isRejected)
+        .map((m) => `${m.role === "user" ? "👤" : "🤖"} ${m.content}`)
+        .join("\n\n");
+      const shareText = `💬 ${selectedCourse} — StudyAI\n\n${content}`;
+      await Share.share({ message: shareText });
+    }}
+    disabled={messages.length <= 1}
+    style={{ padding: 4, marginRight: 4, opacity: messages.length <= 1 ? 0.3 : 1 }}
+  >
+    <Ionicons name="share-social-outline" size={20} color="#6366F1" />
+  </TouchableOpacity>
           <TouchableOpacity onPress={handleReset} style={{ padding: 4 }}>
             <Ionicons name="refresh-outline" size={20} color="#9CA3AF" />
           </TouchableOpacity>
