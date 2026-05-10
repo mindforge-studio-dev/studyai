@@ -1,5 +1,5 @@
 // app/(auth)/login.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View, Text, TextInput, TouchableOpacity,
   ActivityIndicator, Alert, KeyboardAvoidingView,
@@ -12,10 +12,11 @@ import { useAuthStore } from "@/store/authStore";
 import { useLanguageStore, LANGUAGES, Language } from "@/store/languageStore";
 import {
   getAuth, signInWithEmailAndPassword,
-  sendEmailVerification, signOut,sendPasswordResetEmail,
+  sendEmailVerification, signOut, sendPasswordResetEmail,
 } from "firebase/auth";
 import app from "@/src/config/firebase";
-
+import { GoogleSignInButton } from "../../components/GoogleSignInButton";
+import { configureGoogleSignIn, signInWithGoogle } from "../../services/googleAuth";
 
 export default function LoginScreen() {
   const params = useLocalSearchParams<{ email?: string; justRegistered?: string }>();
@@ -30,6 +31,7 @@ export default function LoginScreen() {
   const [resending, setResending] = useState(false);
   const [showLangModal, setShowLangModal] = useState(false);
   const [changingLang, setChangingLang] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const t = {
     title:         currentLanguage === "ar" ? "تسجيل الدخول"       : currentLanguage === "en" ? "Sign in"              : "Connexion",
@@ -56,6 +58,30 @@ export default function LoginScreen() {
     resendSuccess: currentLanguage === "ar" ? "تم إرسال بريد التحقق!"   : currentLanguage === "en" ? "Verification email sent!"  : "Email de vérification renvoyé !",
     resendError:   currentLanguage === "ar" ? "تعذر إرسال البريد. تحقق من بياناتك." : currentLanguage === "en" ? "Could not resend email. Check your credentials." : "Impossible de renvoyer l'email. Vérifie tes identifiants.",
     selectLang:    currentLanguage === "ar" ? "اختر اللغة" : currentLanguage === "en" ? "Select language" : "Choisir la langue",
+    googleBtn:     currentLanguage === "ar" ? "المتابعة مع Google" : currentLanguage === "en" ? "Continue with Google" : "Continuer avec Google",
+    googleError:   currentLanguage === "ar" ? "فشل تسجيل الدخول عبر Google. حاول مجدداً." : currentLanguage === "en" ? "Google Sign-In failed. Please try again." : "Connexion Google échouée. Réessaie.",
+    forgotPwd:     currentLanguage === "ar" ? "نسيت كلمة المرور؟" : currentLanguage === "en" ? "Forgot password?" : "Mot de passe oublié ?",
+    forgotEnter:   currentLanguage === "ar" ? "أدخل بريدك الإلكتروني أولاً." : currentLanguage === "en" ? "Enter your email first." : "Entre ton email d'abord.",
+    forgotSent:    currentLanguage === "ar" ? "تم إرسال رابط إعادة تعيين كلمة المرور. تحقق من صندوق الوارد ومجلد البريد العشوائي (Spam)." : currentLanguage === "en" ? "Password reset link sent. Check your inbox and your Spam or Junk folder." : "Lien de réinitialisation envoyé. Vérifie ta boîte mail et ton dossier Spam ou Courrier indésirable.",
+    forgotError:   currentLanguage === "ar" ? "تعذر إرسال البريد. تحقق من عنوان بريدك." : currentLanguage === "en" ? "Could not send email. Check your address." : "Impossible d'envoyer l'email. Vérifie ton adresse.",
+    or:            currentLanguage === "ar" ? "أو" : currentLanguage === "en" ? "or" : "ou",
+  };
+
+  useEffect(() => {
+    configureGoogleSignIn();
+  }, []);
+
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    try {
+      const result = await signInWithGoogle();
+      if (result.status === "error") {
+        Alert.alert("", t.googleError);
+      }
+      // Si success → _layout.tsx gère la navigation automatiquement
+    } finally {
+      setGoogleLoading(false);
+    }
   };
 
   const handleLogin = async () => {
@@ -92,40 +118,22 @@ export default function LoginScreen() {
   };
 
   const handleLanguageChange = async (lang: Language) => {
-    if (lang === currentLanguage) {
-      setShowLangModal(false);
-      return;
-    }
+    if (lang === currentLanguage) { setShowLangModal(false); return; }
     setChangingLang(true);
     setShowLangModal(false);
-    try {
-      await setLanguage(lang);
-    } catch (e) {
-      console.log("Language change error:", e);
-    } finally {
-      setChangingLang(false);
-    }
+    try { await setLanguage(lang); } catch (e) { console.log(e); } finally { setChangingLang(false); }
   };
 
   const handleForgotPassword = async () => {
-  if (!email.trim()) {
-    Alert.alert("", currentLanguage === "ar" ? "أدخل بريدك الإلكتروني أولاً." : currentLanguage === "en" ? "Enter your email first." : "Entre ton email d'abord.");
-    return;
-  }
-  try {
-    const auth = getAuth(app);
-    await sendPasswordResetEmail(auth, email.trim());
-    Alert.alert("✅",
-  currentLanguage === "ar"
-    ? "تم إرسال رابط إعادة تعيين كلمة المرور. تحقق من صندوق الوارد ومجلد البريد العشوائي (Spam)."
-    : currentLanguage === "en"
-    ? "Password reset link sent. Check your inbox and your Spam or Junk folder."
-    : "Lien de réinitialisation envoyé. Vérifie ta boîte mail et ton dossier Spam ou Courrier indésirable."
-);
-  } catch (e: any) {
-    Alert.alert("", currentLanguage === "ar" ? "تعذر إرسال البريد. تحقق من عنوان بريدك." : currentLanguage === "en" ? "Could not send email. Check your address." : "Impossible d'envoyer l'email. Vérifie ton adresse.");
-  }
-};
+    if (!email.trim()) { Alert.alert("", t.forgotEnter); return; }
+    try {
+      const auth = getAuth(app);
+      await sendPasswordResetEmail(auth, email.trim());
+      Alert.alert("✅", t.forgotSent);
+    } catch (e: any) {
+      Alert.alert("", t.forgotError);
+    }
+  };
 
   const currentLang = LANGUAGES.find((l) => l.code === currentLanguage);
 
@@ -184,8 +192,6 @@ export default function LoginScreen() {
               }}>
                 {t.notVerified}
               </Text>
-
-              {/* Message expiration */}
               <Text style={{
                 fontSize: 12, color: "#EF4444", marginBottom: 12,
                 lineHeight: 18, fontWeight: "600",
@@ -194,7 +200,6 @@ export default function LoginScreen() {
               }}>
                 {t.expiring}
               </Text>
-
               <TouchableOpacity
                 onPress={handleResendVerification}
                 disabled={resending}
@@ -243,7 +248,7 @@ export default function LoginScreen() {
           }}>
             {t.passwordLabel}
           </Text>
-          <View style={{ position: "relative", marginBottom: 28 }}>
+          <View style={{ position: "relative", marginBottom: 8 }}>
             <TextInput
               value={password}
               onChangeText={setPassword}
@@ -268,15 +273,15 @@ export default function LoginScreen() {
             </TouchableOpacity>
           </View>
 
-         {/* Mot de passe oublié */}
-<TouchableOpacity
-  onPress={handleForgotPassword}
-  style={{ alignItems: isRTL ? "flex-start" : "flex-end", marginBottom: 20 }}
->
-  <Text style={{ fontSize: 13, color: "#6366F1", fontWeight: "600" }}>
-    {currentLanguage === "ar" ? "نسيت كلمة المرور؟" : currentLanguage === "en" ? "Forgot password?" : "Mot de passe oublié ?"}
-  </Text>
-</TouchableOpacity>
+          {/* Mot de passe oublié */}
+          <TouchableOpacity
+            onPress={handleForgotPassword}
+            style={{ alignItems: isRTL ? "flex-start" : "flex-end", marginBottom: 20, marginTop: 8 }}
+          >
+            <Text style={{ fontSize: 13, color: "#6366F1", fontWeight: "600" }}>
+              {t.forgotPwd}
+            </Text>
+          </TouchableOpacity>
 
           {/* Bouton Login */}
           <TouchableOpacity
@@ -297,10 +302,27 @@ export default function LoginScreen() {
             )}
           </TouchableOpacity>
 
+          {/* Séparateur */}
+          <View style={{
+            flexDirection: "row", alignItems: "center",
+            marginVertical: 16, gap: 10,
+          }}>
+            <View style={{ flex: 1, height: 1, backgroundColor: "#E5E7EB" }} />
+            <Text style={{ fontSize: 13, color: "#9CA3AF" }}>{t.or}</Text>
+            <View style={{ flex: 1, height: 1, backgroundColor: "#E5E7EB" }} />
+          </View>
+
+          {/* Bouton Google */}
+          <GoogleSignInButton
+            onPress={handleGoogleSignIn}
+            isLoading={googleLoading}
+            label={t.googleBtn}
+          />
+
           {/* Signup link */}
           <TouchableOpacity
             onPress={() => router.push("/(auth)/signup")}
-            style={{ alignItems: "center", padding: 8 }}
+            style={{ alignItems: "center", padding: 8, marginTop: 16 }}
           >
             <Text style={{ fontSize: 14, color: "#6B7280" }}>
               {t.noAccount}

@@ -1,5 +1,5 @@
 // app/(auth)/signup.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   View, Text, TextInput, TouchableOpacity,
   ActivityIndicator, Alert, KeyboardAvoidingView,
@@ -9,10 +9,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { getFunctions, httpsCallable } from "firebase/functions";
-import { getApp } from "firebase/app";
 import { useAuthStore } from "@/store/authStore";
 import { useLanguageStore, LANGUAGES, Language } from "@/store/languageStore";
+import { GoogleSignInButton } from "../../components/GoogleSignInButton";
+import { configureGoogleSignIn, signInWithGoogle } from "../../services/googleAuth";
 
 const getPasswordStrength = (pwd: string, lang: string): { label: string; color: string; score: number } => {
   let score = 0;
@@ -28,7 +28,7 @@ const getPasswordStrength = (pwd: string, lang: string): { label: string; color:
   };
   if (score <= 1) return { label: labels.weak,   color: "#EF4444", score };
   if (score === 2) return { label: labels.medium, color: "#F59E0B", score };
-  if (score === 3) return { label: labels.good,   color: "#10B981", score };
+  if (score <= 3) return { label: labels.good,   color: "#10B981", score };
   return              { label: labels.strong, color: "#6366F1", score };
 };
 
@@ -47,6 +47,7 @@ export default function SignupScreen() {
   const [showPassword, setShowPassword] = useState(false);
   const [showLangModal, setShowLangModal] = useState(false);
   const [changingLang, setChangingLang] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   // ── Parental consent ──
   const [showParentSection, setShowParentSection] = useState(false);
@@ -89,6 +90,26 @@ export default function SignupScreen() {
     continueBtn:      currentLanguage === "ar" ? "متابعة إلى تسجيل الدخول"                 : currentLanguage === "en" ? "Continue to login"                : "Continuer vers la connexion",
     errParentEmail:   currentLanguage === "ar" ? "بريد ولي الأمر غير صالح."                : currentLanguage === "en" ? "Invalid parent email."            : "Email parent invalide.",
     errConsentFail:   currentLanguage === "ar" ? "فشل إرسال الطلب. حاول مجدداً."          : currentLanguage === "en" ? "Failed to send request. Try again." : "Échec de l'envoi. Réessaie.",
+    googleBtn:        currentLanguage === "ar" ? "التسجيل مع Google"                       : currentLanguage === "en" ? "Sign up with Google"              : "S'inscrire avec Google",
+    googleError:      currentLanguage === "ar" ? "فشل التسجيل عبر Google. حاول مجدداً."   : currentLanguage === "en" ? "Google Sign-Up failed. Please try again." : "Inscription Google échouée. Réessaie.",
+    or:               currentLanguage === "ar" ? "أو"                                      : currentLanguage === "en" ? "or"                              : "ou",
+  };
+
+  useEffect(() => {
+    configureGoogleSignIn();
+  }, []);
+
+  const handleGoogleSignIn = async () => {
+    setGoogleLoading(true);
+    try {
+      const result = await signInWithGoogle();
+      if (result.status === "error") {
+        Alert.alert("", t.googleError);
+      }
+      // Si success → _layout.tsx gère la navigation automatiquement
+    } finally {
+      setGoogleLoading(false);
+    }
   };
 
   const formatDate = (date: Date) =>
@@ -144,38 +165,38 @@ export default function SignupScreen() {
   };
 
   const handleSendParentalConsent = async () => {
-  if (!parentEmail.trim() || !parentEmail.includes("@")) {
-    Alert.alert("", t.errParentEmail);
-    return;
-  }
-  if (!lastCreatedUid) {
-    Alert.alert("", t.errConsentFail);
-    return;
-  }
-  setSendingConsent(true);
-  try {
-    const response = await fetch(
-      "https://us-central1-studyai-ab88e.cloudfunctions.net/sendParentalConsent",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          parentEmail: parentEmail.trim(),
-          childName: `${firstName} ${lastName}`,
-          language: currentLanguage,
-          uid: lastCreatedUid,
-        }),
-      }
-    );
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.error || t.errConsentFail);
-    setConsentSent(true);
-  } catch (e: any) {
-    Alert.alert("", e.message || t.errConsentFail);
-  } finally {
-    setSendingConsent(false);
-  }
-};
+    if (!parentEmail.trim() || !parentEmail.includes("@")) {
+      Alert.alert("", t.errParentEmail);
+      return;
+    }
+    if (!lastCreatedUid) {
+      Alert.alert("", t.errConsentFail);
+      return;
+    }
+    setSendingConsent(true);
+    try {
+      const response = await fetch(
+        "https://us-central1-studyai-ab88e.cloudfunctions.net/sendParentalConsent",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            parentEmail: parentEmail.trim(),
+            childName: `${firstName} ${lastName}`,
+            language: currentLanguage,
+            uid: lastCreatedUid,
+          }),
+        }
+      );
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || t.errConsentFail);
+      setConsentSent(true);
+    } catch (e: any) {
+      Alert.alert("", e.message || t.errConsentFail);
+    } finally {
+      setSendingConsent(false);
+    }
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F9FA" }}>
@@ -228,7 +249,6 @@ export default function SignupScreen() {
               <Text style={{ fontSize: 14, color: "#92400E", lineHeight: 22, marginBottom: 20, textAlign: isRTL ? "right" : "left" }}>
                 {t.parentDesc}
               </Text>
-
               <Text style={{ fontSize: 14, fontWeight: "600", color: "#374151", marginBottom: 8, textAlign: isRTL ? "right" : "left" }}>
                 {t.parentEmailLabel}
               </Text>
@@ -247,7 +267,6 @@ export default function SignupScreen() {
                   marginBottom: 16, opacity: consentSent ? 0.6 : 1,
                 }}
               />
-
               {consentSent ? (
                 <View>
                   <View style={{
@@ -263,10 +282,7 @@ export default function SignupScreen() {
                       pathname: "/(auth)/login",
                       params: { email: email.trim(), justRegistered: "true" },
                     })}
-                    style={{
-                      backgroundColor: "#6366F1", borderRadius: 14,
-                      padding: 16, alignItems: "center",
-                    }}
+                    style={{ backgroundColor: "#6366F1", borderRadius: 14, padding: 16, alignItems: "center" }}
                   >
                     <Text style={{ color: "#FFF", fontWeight: "700", fontSize: 16 }}>
                       {t.continueBtn}
@@ -300,12 +316,9 @@ export default function SignupScreen() {
                 {t.firstName}
               </Text>
               <TextInput
-                value={firstName}
-                onChangeText={setFirstName}
-                placeholder={t.firstNamePH}
-                placeholderTextColor="#9CA3AF"
-                autoCapitalize="words"
-                textAlign={isRTL ? "right" : "left"}
+                value={firstName} onChangeText={setFirstName}
+                placeholder={t.firstNamePH} placeholderTextColor="#9CA3AF"
+                autoCapitalize="words" textAlign={isRTL ? "right" : "left"}
                 style={{
                   backgroundColor: "#FFFFFF", borderWidth: 1, borderColor: "#E5E7EB",
                   borderRadius: 12, padding: 14, fontSize: 15, color: "#111827", marginBottom: 16,
@@ -317,12 +330,9 @@ export default function SignupScreen() {
                 {t.lastName}
               </Text>
               <TextInput
-                value={lastName}
-                onChangeText={setLastName}
-                placeholder={t.lastNamePH}
-                placeholderTextColor="#9CA3AF"
-                autoCapitalize="words"
-                textAlign={isRTL ? "right" : "left"}
+                value={lastName} onChangeText={setLastName}
+                placeholder={t.lastNamePH} placeholderTextColor="#9CA3AF"
+                autoCapitalize="words" textAlign={isRTL ? "right" : "left"}
                 style={{
                   backgroundColor: "#FFFFFF", borderWidth: 1, borderColor: "#E5E7EB",
                   borderRadius: 12, padding: 14, fontSize: 15, color: "#111827", marginBottom: 16,
@@ -347,15 +357,10 @@ export default function SignupScreen() {
               </TouchableOpacity>
               {showDatePicker && (
                 <DateTimePicker
-                  value={birthDate}
-                  mode="date"
+                  value={birthDate} mode="date"
                   display={Platform.OS === "ios" ? "spinner" : "default"}
-                  maximumDate={new Date()}
-                  minimumDate={new Date(1900, 0, 1)}
-                  onChange={(_, date) => {
-                    setShowDatePicker(false);
-                    if (date) setBirthDate(date);
-                  }}
+                  maximumDate={new Date()} minimumDate={new Date(1900, 0, 1)}
+                  onChange={(_, date) => { setShowDatePicker(false); if (date) setBirthDate(date); }}
                 />
               )}
 
@@ -364,12 +369,9 @@ export default function SignupScreen() {
                 {t.emailLabel}
               </Text>
               <TextInput
-                value={email}
-                onChangeText={setEmail}
-                placeholder={t.emailPH}
-                placeholderTextColor="#9CA3AF"
-                keyboardType="email-address"
-                autoCapitalize="none"
+                value={email} onChangeText={setEmail}
+                placeholder={t.emailPH} placeholderTextColor="#9CA3AF"
+                keyboardType="email-address" autoCapitalize="none"
                 textAlign={isRTL ? "right" : "left"}
                 style={{
                   backgroundColor: "#FFFFFF", borderWidth: 1, borderColor: "#E5E7EB",
@@ -383,12 +385,9 @@ export default function SignupScreen() {
               </Text>
               <View style={{ position: "relative", marginBottom: 8 }}>
                 <TextInput
-                  value={password}
-                  onChangeText={setPassword}
-                  placeholder="••••••••"
-                  placeholderTextColor="#9CA3AF"
-                  secureTextEntry={!showPassword}
-                  textAlign={isRTL ? "right" : "left"}
+                  value={password} onChangeText={setPassword}
+                  placeholder="••••••••" placeholderTextColor="#9CA3AF"
+                  secureTextEntry={!showPassword} textAlign={isRTL ? "right" : "left"}
                   style={{
                     backgroundColor: "#FFFFFF", borderWidth: 1, borderColor: "#E5E7EB",
                     borderRadius: 12, padding: 14, paddingRight: 48, fontSize: 15, color: "#111827",
@@ -419,17 +418,14 @@ export default function SignupScreen() {
                 </View>
               )}
 
-              {/* Confirmer */}
+              {/* Confirmer mot de passe */}
               <Text style={{ fontSize: 14, fontWeight: "600", color: "#374151", marginBottom: 8, textAlign: isRTL ? "right" : "left" }}>
                 {t.confirm}
               </Text>
               <TextInput
-                value={confirm}
-                onChangeText={setConfirm}
-                placeholder="••••••••"
-                placeholderTextColor="#9CA3AF"
-                secureTextEntry
-                textAlign={isRTL ? "right" : "left"}
+                value={confirm} onChangeText={setConfirm}
+                placeholder="••••••••" placeholderTextColor="#9CA3AF"
+                secureTextEntry textAlign={isRTL ? "right" : "left"}
                 style={{
                   backgroundColor: "#FFFFFF", borderWidth: 1,
                   borderColor: confirm.length > 0 && confirm !== password ? "#EF4444" : "#E5E7EB",
@@ -443,9 +439,9 @@ export default function SignupScreen() {
                 </Text>
               )}
 
+              {/* Bouton Créer compte */}
               <TouchableOpacity
-                onPress={handleSignup}
-                disabled={isLoading}
+                onPress={handleSignup} disabled={isLoading}
                 style={{
                   backgroundColor: isLoading ? "#A5B4FC" : "#6366F1",
                   borderRadius: 14, padding: 16, alignItems: "center",
@@ -455,15 +451,28 @@ export default function SignupScreen() {
                 {isLoading ? (
                   <ActivityIndicator color="#FFF" />
                 ) : (
-                  <Text style={{ color: "#FFF", fontWeight: "700", fontSize: 16 }}>
-                    {t.createBtn}
-                  </Text>
+                  <Text style={{ color: "#FFF", fontWeight: "700", fontSize: 16 }}>{t.createBtn}</Text>
                 )}
               </TouchableOpacity>
 
+              {/* Séparateur */}
+              <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 16, gap: 10 }}>
+                <View style={{ flex: 1, height: 1, backgroundColor: "#E5E7EB" }} />
+                <Text style={{ fontSize: 13, color: "#9CA3AF" }}>{t.or}</Text>
+                <View style={{ flex: 1, height: 1, backgroundColor: "#E5E7EB" }} />
+              </View>
+
+              {/* Bouton Google */}
+              <GoogleSignInButton
+                onPress={handleGoogleSignIn}
+                isLoading={googleLoading}
+                label={t.googleBtn}
+              />
+
+              {/* Lien login */}
               <TouchableOpacity
                 onPress={() => router.back()}
-                style={{ alignItems: "center", padding: 8 }}
+                style={{ alignItems: "center", padding: 8, marginTop: 16 }}
               >
                 <Text style={{ fontSize: 14, color: "#6B7280" }}>
                   {t.alreadyAccount}
@@ -477,15 +486,12 @@ export default function SignupScreen() {
 
       {/* Modal sélection langue */}
       <Modal
-        visible={showLangModal}
-        transparent
-        animationType="slide"
+        visible={showLangModal} transparent animationType="slide"
         onRequestClose={() => setShowLangModal(false)}
       >
         <TouchableOpacity
           style={{ flex: 1, backgroundColor: "#00000050" }}
-          onPress={() => setShowLangModal(false)}
-          activeOpacity={1}
+          onPress={() => setShowLangModal(false)} activeOpacity={1}
         >
           <View style={{
             position: "absolute", bottom: 0, left: 0, right: 0,
@@ -497,8 +503,7 @@ export default function SignupScreen() {
             </Text>
             {LANGUAGES.map((lang) => (
               <TouchableOpacity
-                key={lang.code}
-                onPress={() => handleLanguageChange(lang.code)}
+                key={lang.code} onPress={() => handleLanguageChange(lang.code)}
                 style={{
                   flexDirection: "row", alignItems: "center", padding: 16,
                   borderRadius: 12, marginBottom: 8,

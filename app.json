@@ -42,7 +42,8 @@
       "expo-router",
       "expo-asset",
       "@react-native-community/datetimepicker",
-      "expo-localization"
+      "expo-localization",
+      "@react-native-google-signin/google-signin"
     ],
     "scheme": "studyai",
     "experiments": {
@@ -56,5 +57,6 @@
         "projectId": "b2df1a4a-116f-49da-a8cb-4ba9b9966319"
       }
     }
+    
   }
 }

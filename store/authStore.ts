@@ -14,6 +14,7 @@ import {
   getFirestore, doc, setDoc, getDoc,
 } from "firebase/firestore";
 import app from "../src/config/firebase";
+import { signInWithGoogle, configureGoogleSignIn } from "@/services/googleAuth";
 
 const auth = getAuth(app);
 
@@ -109,6 +110,7 @@ interface AuthState {
   initialize: () => () => void;
   sendVerificationEmail: () => Promise<void>;
   reloadUser: () => Promise<void>;
+  loginWithGoogle: () => Promise<{ isNewUser: boolean; isChild: boolean; uid: string }>;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -233,6 +235,30 @@ export const useAuthStore = create<AuthState>((set) => ({
       console.log("reloadUser error:", e);
     }
   },
+
+  loginWithGoogle: async () => {
+  set({ isLoading: true, error: null });
+  try {
+    const result = await signInWithGoogle();
+    if (result.status === "cancelled") {
+      set({ isLoading: false });
+      return { isNewUser: false, isChild: false, uid: "" };
+    }
+    if (result.status === "error") {
+      set({ isLoading: false, error: result.message });
+      throw new Error(result.message);
+    }
+    set({ isLoading: false, firstName: result.firstName });
+    return {
+      isNewUser: result.isNewUser,
+      isChild: result.isChild,
+      uid: result.uid,
+    };
+  } catch (e: any) {
+    set({ isLoading: false, error: e.message });
+    throw e;
+  }
+},
 
   clearError: () => set({ error: null }),
 }));
