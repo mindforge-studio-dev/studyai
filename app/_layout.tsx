@@ -1,7 +1,7 @@
 // app/_layout.tsx
 import "../i18n";
-import { useEffect } from "react";
-import { LogBox } from "react-native";
+import { useEffect, useState } from "react";
+import { LogBox, View, Text, ActivityIndicator } from "react-native";
 import { Stack, router, useSegments } from "expo-router";
 import { useAuthStore } from "@/store/authStore";
 import { useUsageStore } from "@/store/usageStore";
@@ -9,9 +9,9 @@ import { useNotificationStore } from "../store/notificationStore";
 import * as Notifications from "expo-notifications";
 import { useLanguageStore } from "../store/languageStore";
 import { trackConversion } from "../services/analytics";
-import { View, Text, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { OfflineBanner } from "../components/OfflineBanner";
+import { useOnboardingStore } from "../store/onboardingStore";
 
 LogBox.ignoreLogs([
   "Do not call Hooks inside useEffect",
@@ -26,10 +26,15 @@ export default function RootLayout() {
   const segments = useSegments();
   const { loadSettings } = useNotificationStore();
   const { currentLanguage } = useLanguageStore();
+  const { onboardingDone, checkOnboarding } = useOnboardingStore();
 
   useEffect(() => {
     const unsubscribe = initialize();
     return unsubscribe;
+  }, []);
+
+  useEffect(() => {
+    checkOnboarding();
   }, []);
 
   useEffect(() => {
@@ -43,6 +48,14 @@ export default function RootLayout() {
   useEffect(() => {
     if (!isInitialized) return;
     if (!segments) return;
+    if (onboardingDone === null) return;
+    if (segments[0] === "onboarding") return;
+
+    if (!onboardingDone) {
+      router.replace("/onboarding" as any);
+      return;
+    }
+
     const inAuthGroup = segments[0] === "(auth)";
     if (!user && !inAuthGroup) {
       router.replace("/(auth)/login");
@@ -51,7 +64,7 @@ export default function RootLayout() {
         router.replace("/(tabs)/home");
       }
     }
-  }, [user, isInitialized, segments]);
+  }, [user, isInitialized, segments, onboardingDone]);
 
   useEffect(() => {
     const sub = Notifications.addNotificationResponseReceivedListener(() => {
@@ -60,39 +73,40 @@ export default function RootLayout() {
     return () => sub.remove();
   }, []);
 
-  
-if (!isInitialized) {
-  return (
-    <View style={{ flex: 1, backgroundColor: "#F8F9FA", alignItems: "center", justifyContent: "center" }}>
-      <View style={{
-        width: 72, height: 72, borderRadius: 20,
-        backgroundColor: "#6366F1", alignItems: "center",
-        justifyContent: "center", marginBottom: 24,
-      }}>
-        <Ionicons name="school" size={36} color="#FFFFFF" />
+  if (!isInitialized || onboardingDone === null) {
+    return (
+      <View style={{ flex: 1, backgroundColor: "#F8F9FA", alignItems: "center", justifyContent: "center" }}>
+        <View style={{
+          width: 72, height: 72, borderRadius: 20,
+          backgroundColor: "#6366F1", alignItems: "center",
+          justifyContent: "center", marginBottom: 24,
+        }}>
+          <Ionicons name="school" size={36} color="#FFFFFF" />
+        </View>
+        <Text style={{ fontSize: 28, fontWeight: "800", color: "#111827", marginBottom: 8 }}>
+          StudyAI
+        </Text>
+        <ActivityIndicator size="large" color="#6366F1" style={{ marginTop: 16 }} />
       </View>
-      <Text style={{ fontSize: 28, fontWeight: "800", color: "#111827", marginBottom: 8 }}>
-        StudyAI
-      </Text>
-      <ActivityIndicator size="large" color="#6366F1" style={{ marginTop: 16 }} />
-    </View>
-  );
-}
+    );
+  }
+
   return (
     <View style={{ flex: 1 }}>
-    <OfflineBanner />
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Screen name="(auth)" />
-      <Stack.Screen name="(tabs)" />
-      <Stack.Screen name="explain" />
-      <Stack.Screen name="solve" />
-      <Stack.Screen name="flashcards" />
-      <Stack.Screen name="summary" />
-      <Stack.Screen name="plan" />
-      <Stack.Screen name="quiz" />
-      <Stack.Screen name="chat" />
-      <Stack.Screen name="changePassword" />
-    </Stack>
-  </View>
+      <OfflineBanner />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="onboarding" />
+        <Stack.Screen name="(auth)" />
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="explain" />
+        <Stack.Screen name="solve" />
+        <Stack.Screen name="flashcards" />
+        <Stack.Screen name="summary" />
+        <Stack.Screen name="plan" />
+        <Stack.Screen name="quiz" />
+        <Stack.Screen name="chat" />
+        <Stack.Screen name="changePassword" />
+      </Stack>
+    </View>
   );
 }
