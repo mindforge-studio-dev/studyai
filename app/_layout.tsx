@@ -11,6 +11,7 @@ import { useLanguageStore } from "../store/languageStore";
 import { trackConversion } from "../services/analytics";
 import { View, Text, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { OfflineBanner } from "../components/OfflineBanner";
 
 LogBox.ignoreLogs([
   "Do not call Hooks inside useEffect",
@@ -78,6 +79,8 @@ if (!isInitialized) {
   );
 }
   return (
+    <View style={{ flex: 1 }}>
+    <OfflineBanner />
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="(auth)" />
       <Stack.Screen name="(tabs)" />
@@ -90,5 +93,6 @@ if (!isInitialized) {
       <Stack.Screen name="chat" />
       <Stack.Screen name="changePassword" />
     </Stack>
+  </View>
   );
 }
