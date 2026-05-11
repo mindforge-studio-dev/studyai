@@ -237,6 +237,20 @@ export default function SignupScreen() {
             </Text>
           </View>
 
+          {/* Bouton Google EN HAUT */}
+<GoogleSignInButton
+  onPress={handleGoogleSignIn}
+  isLoading={googleLoading}
+  label={t.googleBtn}
+/>
+
+{/* Séparateur */}
+<View style={{ flexDirection: "row", alignItems: "center", marginVertical: 20, gap: 10 }}>
+  <View style={{ flex: 1, height: 1, backgroundColor: "#E5E7EB" }} />
+  <Text style={{ fontSize: 13, color: "#9CA3AF" }}>{t.or}</Text>
+  <View style={{ flex: 1, height: 1, backgroundColor: "#E5E7EB" }} />
+</View>
+
           {/* ── Section Consentement Parental ── */}
           {showParentSection ? (
             <View style={{
@@ -455,19 +469,7 @@ export default function SignupScreen() {
                 )}
               </TouchableOpacity>
 
-              {/* Séparateur */}
-              <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 16, gap: 10 }}>
-                <View style={{ flex: 1, height: 1, backgroundColor: "#E5E7EB" }} />
-                <Text style={{ fontSize: 13, color: "#9CA3AF" }}>{t.or}</Text>
-                <View style={{ flex: 1, height: 1, backgroundColor: "#E5E7EB" }} />
-              </View>
-
-              {/* Bouton Google */}
-              <GoogleSignInButton
-                onPress={handleGoogleSignIn}
-                isLoading={googleLoading}
-                label={t.googleBtn}
-              />
+              
 
               {/* Lien login */}
               <TouchableOpacity

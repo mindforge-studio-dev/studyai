@@ -50,12 +50,9 @@
       "typedRoutes": true
     },
     "extra": {
-      "router": {
-        "origin": false
-      },
-      "eas": {
-        "projectId": "b2df1a4a-116f-49da-a8cb-4ba9b9966319"
-      }
+      "aiModel": "gpt-4o-mini",
+      "router": {"origin": false},
+      "eas": {"projectId": "b2df1a4a-116f-49da-a8cb-4ba9b9966319"}
     }
     
   }

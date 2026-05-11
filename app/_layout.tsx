@@ -106,6 +106,11 @@ export default function RootLayout() {
         <Stack.Screen name="quiz" />
         <Stack.Screen name="chat" />
         <Stack.Screen name="changePassword" />
+        <Stack.Screen name="about" />
+        <Stack.Screen name="privacy" />
+        <Stack.Screen name="terms" />
+        <Stack.Screen name="ranking-rules" />
+        <Stack.Screen name="leaderboard" />
       </Stack>
     </View>
   );

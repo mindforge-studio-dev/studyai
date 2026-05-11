@@ -665,6 +665,8 @@ export default function ProfileScreen() {
           <Ionicons name={isRTL ? "chevron-back" : "chevron-forward"} size={16} color="#D1D5DB" />
         </TouchableOpacity>
 
+        
+
         {/* ── Section Notifications ── */}
         <Text style={{
           fontSize: 15, fontWeight: "700", color: "#111827",
@@ -838,6 +840,52 @@ export default function ProfileScreen() {
             <Ionicons name={isRTL ? "chevron-back" : "chevron-forward"} size={16} color="#D1D5DB" />
           </TouchableOpacity>
         </View>
+
+        {/* Classement */}
+<TouchableOpacity
+  onPress={() => router.push("/leaderboard" as any)}
+  style={{
+    backgroundColor: "#FFFFFF", borderRadius: 14, padding: 16,
+    flexDirection: isRTL ? "row-reverse" : "row",
+    alignItems: "center",
+    borderWidth: 1, borderColor: "#F3F4F6", marginBottom: 16,
+  }}
+>
+  <View style={{
+    width: 36, height: 36, borderRadius: 10, backgroundColor: "#FEF3C7",
+    alignItems: "center", justifyContent: "center",
+    marginRight: isRTL ? 0 : 12, marginLeft: isRTL ? 12 : 0,
+  }}>
+    <Text style={{ fontSize: 18 }}>🏆</Text>
+  </View>
+  <Text style={{ flex: 1, fontSize: 14, color: "#374151", fontWeight: "500", textAlign: isRTL ? "right" : "left" }}>
+    {getLabel("Classement & Trophées", "Leaderboard & Trophies", "التصنيف والجوائز")}
+  </Text>
+  <Ionicons name={isRTL ? "chevron-back" : "chevron-forward"} size={16} color="#D1D5DB" />
+</TouchableOpacity>
+
+        {/* À propos */}
+<TouchableOpacity
+  onPress={() => router.push("/about")}
+  style={{
+    backgroundColor: "#FFFFFF", borderRadius: 14, padding: 16,
+    flexDirection: isRTL ? "row-reverse" : "row",
+    alignItems: "center",
+    borderWidth: 1, borderColor: "#F3F4F6", marginBottom: 16,
+  }}
+>
+  <View style={{
+    width: 36, height: 36, borderRadius: 10, backgroundColor: "#EEF2FF",
+    alignItems: "center", justifyContent: "center",
+    marginRight: isRTL ? 0 : 12, marginLeft: isRTL ? 12 : 0,
+  }}>
+    <Ionicons name="information-circle-outline" size={18} color="#6366F1" />
+  </View>
+  <Text style={{ flex: 1, fontSize: 14, color: "#374151", fontWeight: "500", textAlign: isRTL ? "right" : "left" }}>
+    {getLabel("À propos de StudyAI", "About StudyAI", "حول StudyAI")}
+  </Text>
+  <Ionicons name={isRTL ? "chevron-back" : "chevron-forward"} size={16} color="#D1D5DB" />
+</TouchableOpacity>
 
         {/* ── Section Historiques ── */}
         <View style={{
