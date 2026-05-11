@@ -111,6 +111,9 @@ export default function RootLayout() {
         <Stack.Screen name="terms" />
         <Stack.Screen name="ranking-rules" />
         <Stack.Screen name="leaderboard" />
+        <Stack.Screen name="personal-info" />
+        <Stack.Screen name="notification-settings" />
+        <Stack.Screen name="history-settings" />
       </Stack>
     </View>
   );
