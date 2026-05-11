@@ -14,19 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "890891684306-krmf3lgpmc9gidri8v9gcf4k2fvc8dgq.apps.googleusercontent.com",
+          "client_id": "890891684306-kv4k5jfbg3m5h8q32akcnqpqnb8qstc6.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.studyai.app",
-            "certificate_hash": "169a4df5ba9d9c73a034a79cabe785c3ec6baec5"
-          }
-        },
-        {
-          "client_id": "890891684306-krmf3lgpmc9gidri8v9gcf4k2fvc8dgq.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.studyai.app",
-            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+            "certificate_hash": "7fb5da329343d45b34bf6ad50de5068e5fe4f628"
           }
         },
         {
