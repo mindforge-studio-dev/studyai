@@ -28,6 +28,7 @@ import { useAnalytics } from "../hooks/useAnalytics";
 import { useDeleteHistory } from "../hooks/useDeleteHistory";
 import { ImportTextButton } from "../components/ImportTextButton";
 import { useHistoryStore } from "../store/historyStore";
+import { useStreakStore } from "../store/streakStore";
 
 const CACHE_KEY = "studyai_solutions";
 const MAX_CACHE_ITEMS = 10;
@@ -67,6 +68,8 @@ export default function SolveScreen() {
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot | null>(null);
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const { addPoints } = useStreakStore();
+
 
   useEffect(() => {
     trackView();
@@ -234,6 +237,7 @@ export default function SolveScreen() {
         createdAt: new Date().toISOString(),
       });
       await writeAICache("solve", cacheInput, data);
+      await addPoints("SOLUTION");
       endTracking(true);
     } catch (e: any) {
       endTracking(false);

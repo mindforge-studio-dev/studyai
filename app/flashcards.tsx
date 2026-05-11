@@ -26,6 +26,7 @@ import { limitInput } from "../utils/inputLimiter";
 import { useAnalytics } from "../hooks/useAnalytics";
 import { useDeleteHistory } from "../hooks/useDeleteHistory";
 import { useHistoryStore } from "../store/historyStore";
+import { useStreakStore } from "../store/streakStore";
 
 const CACHE_KEY = "studyai_flashcards";
 const MAX_CACHE_ITEMS = 10;
@@ -65,6 +66,8 @@ export default function FlashcardsScreen() {
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot | null>(null);
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const { addPoints } = useStreakStore();
+
 
   useEffect(() => {
     trackView();
@@ -201,6 +204,7 @@ export default function FlashcardsScreen() {
       setResult({ userId: auth.currentUser?.uid || "anonymous", topic, flashcards: data.flashcards || [], createdAt: new Date().toISOString() });
       await writeAICache("flashcards", cacheInput, data);
       endTracking(true);
+      await addPoints("FLASHCARDS");
     } catch (e: any) {
       endTracking(false);
       Alert.alert(t("error"), e.message || "La génération a échoué.");

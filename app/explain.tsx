@@ -27,6 +27,7 @@ import { useAnalytics } from "../hooks/useAnalytics";
 import { useDeleteHistory } from "../hooks/useDeleteHistory";
 import { ImportTextButton } from "../components/ImportTextButton";
 import { useHistoryStore } from "../store/historyStore";
+import { useStreakStore } from "../store/streakStore";
 
 const CACHE_KEY = "studyai_explanations";
 const MAX_CACHE_ITEMS = 10;
@@ -66,6 +67,7 @@ export default function ExplainScreen() {
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot | null>(null);
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const { addPoints } = useStreakStore();
 
   const difficultyColors: Record<string, string> = {
     facile: "#10B981",
@@ -237,6 +239,7 @@ export default function ExplainScreen() {
         createdAt: new Date().toISOString(),
       });
       await writeAICache("explain", cacheInput, data);
+      await addPoints("EXPLANATION");
       endTracking(true);
     } catch (e: any) {
       endTracking(false);

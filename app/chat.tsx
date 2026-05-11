@@ -29,6 +29,8 @@ import { useHistoryStore } from "../store/historyStore";
 import { useFocusEffect } from "expo-router";
 import { useCallback } from "react";
 import { Share, Clipboard } from "react-native";
+import { useStreakStore } from "../store/streakStore";
+
 
 const CACHE_KEY = "studyai_chatSessions";
 const PAGE_SIZE = 5;
@@ -122,6 +124,8 @@ export default function ChatScreen() {
   const [displayCount, setDisplayCount] = useState(PAGE_SIZE);
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const { addPoints } = useStreakStore();
+
 
   // Remplacer tout le useEffect par ces deux blocs :
 useEffect(() => {
@@ -360,6 +364,7 @@ useFocusEffect(
       const finalMessages = [...newMessages, assistantMessage];
       setMessages(finalMessages);
       endTracking(true); // ← AJOUT Phase 17 — succès
+      await addPoints("CHAT");
 
       if (sessionId) {
         await addMessage(sessionId, userMessage);

@@ -29,6 +29,7 @@ import { useAnalytics } from "../hooks/useAnalytics";
 import { useDeleteHistory } from "../hooks/useDeleteHistory";
 import { useHistoryStore } from "../store/historyStore";
 import { useFocusEffect } from "expo-router";
+import { useStreakStore } from "../store/streakStore";
 
 const CACHE_KEY = "studyai_plans";
 const MAX_CACHE_ITEMS = 10;
@@ -72,6 +73,8 @@ export default function PlanScreen() {
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot | null>(null);
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const { addPoints } = useStreakStore();
+
 
   useEffect(() => { trackView(); }, []);
 
@@ -269,6 +272,7 @@ export default function PlanScreen() {
       setGeneratedPlan(plan);
       await schedulePlanAlert(examDate.toISOString(), limitedSubjects, currentLanguage).catch(() => {});
       await writeAICache("plan", cacheInput, data);
+      await addPoints("PLAN");
       endTracking(true);
     } catch (error: any) {
       endTracking(false);

@@ -132,5 +132,6 @@ export const POINTS = {
   PLAN: 5,
   EXPLANATION: 3,
   SOLUTION: 3,
+  CHAT: 2,
   STREAK_DAY: 2,
 } as const;

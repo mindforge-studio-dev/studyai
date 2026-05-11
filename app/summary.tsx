@@ -28,6 +28,7 @@ import { useHistoryStore } from "../store/historyStore";
 import { ImportTextButton } from "../components/ImportTextButton"; // ← AJOUT
 import { Share } from "react-native";
 import * as Clipboard from "expo-clipboard";
+import { useStreakStore } from "../store/streakStore";
 
 
 const CACHE_KEY = "studyai_summaries";
@@ -68,6 +69,7 @@ export default function SummaryScreen() {
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
   const { checkAndConsume, checkAndConsumeFile } = useAIRequest();
+  const { addPoints } = useStreakStore();
 
   useEffect(() => {
     trackView(); // ← AJOUT Phase 17
@@ -204,6 +206,7 @@ export default function SummaryScreen() {
       setSummary(data.summary || "");
       await writeAICache("summary", cacheInput, data);
       endTracking(true); // ← AJOUT Phase 17 — succès
+      await addPoints("SUMMARY");
     } catch (e: any) {
       endTracking(false); // ← AJOUT Phase 17 — échec
       Alert.alert(t("error"), e.message || "La génération a échoué.");
@@ -254,6 +257,7 @@ export default function SummaryScreen() {
 
       setIsSaved(true);
       Alert.alert("✅", t("saved"));
+       
     } catch (e: any) {
       console.error("Erreur sauvegarde Firestore:", e);
       Alert.alert(

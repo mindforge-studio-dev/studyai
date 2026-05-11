@@ -26,6 +26,7 @@ import { useAnalytics } from "../hooks/useAnalytics";
 import { useDeleteHistory } from "../hooks/useDeleteHistory";
 import { useHistoryStore } from "../store/historyStore";
 import { useFocusEffect } from "expo-router";
+import { useStreakStore } from "../store/streakStore";
 
 const CACHE_KEY = "studyai_quizzes";
 const MAX_CACHE_ITEMS = 10;
@@ -75,6 +76,7 @@ export default function QuizScreen() {
   const [lastDoc, setLastDoc] = useState<QueryDocumentSnapshot | null>(null);
   const [hasMore, setHasMore] = useState(false);
   const [loadingMore, setLoadingMore] = useState(false);
+  const { addPoints } = useStreakStore();
 
   useEffect(() => { trackView(); }, []);
 
@@ -196,6 +198,12 @@ export default function QuizScreen() {
         `${CACHE_KEY}_${user.uid}`,
         JSON.stringify({ data: updated, timestamp: Date.now() })
       );
+
+      //systeme de point
+      await addPoints("QUIZ_COMPLETED", {
+    quizScore: finalScore,
+    quizTotal: questions.length,
+  });
     } catch (e) {
       console.log("Quiz save error:", e);
     }

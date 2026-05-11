@@ -22,6 +22,8 @@ export default function RankingRulesScreen() {
     { icon: "💡", action: getLabel("Explication demandée", "Explanation requested", "شرح مطلوب"), pts: "+3" },
     { icon: "✏️", action: getLabel("Solution demandée", "Solution requested", "حل مطلوب"), pts: "+3" },
     { icon: "🔥", action: getLabel("Streak jour consécutif", "Daily streak", "يوم متتالي"), pts: "+2" },
+    { icon: "💬", action: getLabel("Message chat IA", "AI chat message", "رسالة في المحادثة"), pts: "+2" },
+
   ];
 
   return (
