@@ -22,7 +22,7 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.studyai.app",
+      "bundleIdentifier": "com.mindforgestudio.studyai",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -32,7 +32,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0f172a"
       },
-      "package": "com.studyai.app"
+      "package": "com.mindforgestudio.studyai"
     },
     "web": {
       "favicon": "./assets/favicon.png",

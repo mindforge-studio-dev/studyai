@@ -7,17 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:890891684306:android:e49a22c31944b12de3200b",
+        "mobilesdk_app_id": "1:890891684306:android:084dfdec7892a025e3200b",
         "android_client_info": {
-          "package_name": "com.studyai.app"
+          "package_name": "com.mindforgestudio.studyai"
         }
       },
       "oauth_client": [
         {
-          "client_id": "890891684306-kv4k5jfbg3m5h8q32akcnqpqnb8qstc6.apps.googleusercontent.com",
+          "client_id": "890891684306-3aqopc3sfvms44jvo2fr32hjgmr1r4pt.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.studyai.app",
+            "package_name": "com.mindforgestudio.studyai",
             "certificate_hash": "7fb5da329343d45b34bf6ad50de5068e5fe4f628"
           }
         },
