@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudyAI — Politique de confidentialité</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #F8F9FA;
+      color: #111827;
+      line-height: 1.7;
+    }
+    header {
+      background: #6366F1;
+      color: white;
+      padding: 40px 24px;
+      text-align: center;
+    }
+    header h1 { font-size: 28px; font-weight: 800; margin-bottom: 8px; }
+    header p { font-size: 14px; opacity: 0.85; }
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border-radius: 20px;
+      padding: 4px 16px;
+      font-size: 12px;
+      margin-top: 10px;
+    }
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 32px 24px 60px;
+    }
+    .intro {
+      background: #EEF2FF;
+      border-radius: 12px;
+      padding: 16px 20px;
+      margin-bottom: 28px;
+      color: #3730A3;
+      font-size: 14px;
+    }
+    .section {
+      background: white;
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-bottom: 14px;
+      border: 1px solid #F3F4F6;
+    }
+    .section h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #6366F1;
+      margin-bottom: 10px;
+    }
+    .section p, .section li {
+      font-size: 14px;
+      color: #374151;
+      line-height: 1.7;
+    }
+    .section ul {
+      padding-left: 20px;
+      margin-top: 6px;
+    }
+    .section li { margin-bottom: 4px; }
+    .lang-switcher {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    .lang-btn {
+      padding: 8px 20px;
+      border-radius: 20px;
+      border: 2px solid #6366F1;
+      background: white;
+      color: #6366F1;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .lang-btn.active, .lang-btn:hover {
+      background: #6366F1;
+      color: white;
+    }
+    footer {
+      text-align: center;
+      padding: 24px;
+      font-size: 12px;
+      color: #9CA3AF;
+    }
+    [dir="rtl"] { text-align: right; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>📱 StudyAI</h1>
+  <p>Privacy Policy · Politique de confidentialité · سياسة الخصوصية</p>
+  <span class="badge">Dernière mise à jour : Mai 2025</span>
+</header>
+
+<div class="container">
+
+  <!-- Language switcher -->
+  <div class="lang-switcher">
+    <button class="lang-btn active" onclick="setLang('fr')">🇫🇷 Français</button>
+    <button class="lang-btn" onclick="setLang('en')">🇬🇧 English</button>
+    <button class="lang-btn" onclick="setLang('ar')">🇲🇦 العربية</button>
+  </div>
+
+  <!-- ═══════════════ FRANÇAIS ═══════════════ -->
+  <div id="lang-fr">
+    <div class="intro">
+      Chez StudyAI, nous respectons votre vie privée. Cette politique explique comment nous collectons, utilisons et protégeons vos données personnelles.
+    </div>
+
+    <div class="section">
+      <h2>1. Données collectées</h2>
+      <p>StudyAI collecte les informations suivantes :</p>
+      <ul>
+        <li>Nom et prénom</li>
+        <li>Adresse email</li>
+        <li>Date de naissance</li>
+        <li>Contenu généré (quiz, résumés, flashcards, plans)</li>
+        <li>Données d'utilisation (nombre de requêtes, fichiers importés)</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>2. Utilisation des données</h2>
+      <p>Vos données sont utilisées pour :</p>
+      <ul>
+        <li>Fournir et améliorer nos services</li>
+        <li>Personnaliser votre expérience</li>
+        <li>Gérer votre compte et votre abonnement</li>
+        <li>Envoyer des notifications importantes</li>
+        <li>Assurer la sécurité de la plateforme</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>3. Partage des données</h2>
+      <p>StudyAI ne vend jamais vos données personnelles. Nous partageons vos données uniquement avec :</p>
+      <ul>
+        <li>Firebase (Google) pour le stockage et l'authentification</li>
+        <li>OpenAI pour la génération de contenu IA</li>
+        <li>RevenueCat pour la gestion des abonnements</li>
+      </ul>
+      <p style="margin-top:8px">Ces partenaires sont soumis à des politiques strictes de confidentialité.</p>
+    </div>
+
+    <div class="section">
+      <h2>4. Protection des mineurs</h2>
+      <p>Pour les utilisateurs de moins de 13 ans, nous exigeons le consentement parental avant l'activation du compte. Les données des mineurs sont traitées avec une attention particulière et ne sont jamais utilisées à des fins commerciales.</p>
+    </div>
+
+    <div class="section">
+      <h2>5. Sécurité</h2>
+      <p>Nous utilisons des mesures de sécurité standard pour protéger vos données :</p>
+      <ul>
+        <li>Chiffrement SSL/TLS</li>
+        <li>Authentification Firebase</li>
+        <li>Règles Firestore strictes</li>
+        <li>Suppression automatique des comptes non vérifiés après 24h</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>6. Vos droits</h2>
+      <p>Vous avez le droit de :</p>
+      <ul>
+        <li>Accéder à vos données personnelles</li>
+        <li>Modifier vos informations depuis l'écran Profil</li>
+        <li>Supprimer votre compte et toutes vos données</li>
+        <li>Contacter notre équipe pour toute demande</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>7. Contact</h2>
+      <p>Pour toute question concernant cette politique :<br>
+      <a href="mailto:mindforge.studio.dev@gmail.com" style="color:#6366F1">mindforge.studio.dev@gmail.com</a></p>
+    </div>
+  </div>
+
+  <!-- ═══════════════ ENGLISH ═══════════════ -->
+  <div id="lang-en" class="hidden">
+    <div class="intro">
+      At StudyAI, we respect your privacy. This policy explains how we collect, use, and protect your personal data.
+    </div>
+
+    <div class="section">
+      <h2>1. Data Collected</h2>
+      <p>StudyAI collects the following information:</p>
+      <ul>
+        <li>First and last name</li>
+        <li>Email address</li>
+        <li>Date of birth</li>
+        <li>Generated content (quizzes, summaries, flashcards, plans)</li>
+        <li>Usage data (number of requests, imported files)</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>2. Use of Data</h2>
+      <p>Your data is used to:</p>
+      <ul>
+        <li>Provide and improve our services</li>
+        <li>Personalize your experience</li>
+        <li>Manage your account and subscription</li>
+        <li>Send important notifications</li>
+        <li>Ensure platform security</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>3. Data Sharing</h2>
+      <p>StudyAI never sells your personal data. We share your data only with:</p>
+      <ul>
+        <li>Firebase (Google) for storage and authentication</li>
+        <li>OpenAI for AI content generation</li>
+        <li>RevenueCat for subscription management</li>
+      </ul>
+      <p style="margin-top:8px">These partners are subject to strict privacy policies.</p>
+    </div>
+
+    <div class="section">
+      <h2>4. Protection of Minors</h2>
+      <p>For users under 13 years old, we require parental consent before account activation. Minors' data is handled with special care and is never used for commercial purposes.</p>
+    </div>
+
+    <div class="section">
+      <h2>5. Security</h2>
+      <p>We use standard security measures to protect your data:</p>
+      <ul>
+        <li>SSL/TLS encryption</li>
+        <li>Firebase authentication</li>
+        <li>Strict Firestore rules</li>
+        <li>Automatic deletion of unverified accounts after 24 hours</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>6. Your Rights</h2>
+      <p>You have the right to:</p>
+      <ul>
+        <li>Access your personal data</li>
+        <li>Modify your information from the Profile screen</li>
+        <li>Delete your account and all your data</li>
+        <li>Contact our team for any request</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>7. Contact</h2>
+      <p>For any questions regarding this policy:<br>
+      <a href="mailto:mindforge.studio.dev@gmail.com" style="color:#6366F1">mindforge.studio.dev@gmail.com</a></p>
+    </div>
+  </div>
+
+  <!-- ═══════════════ ARABIC ═══════════════ -->
+  <div id="lang-ar" class="hidden" dir="rtl">
+    <div class="intro" style="text-align:right">
+      في StudyAI، نحترم خصوصيتك. توضح هذه السياسة كيفية جمع بياناتك الشخصية واستخدامها وحمايتها.
+    </div>
+
+    <div class="section">
+      <h2>1. البيانات المجمعة</h2>
+      <p>يجمع StudyAI المعلومات التالية:</p>
+      <ul>
+        <li>الاسم الأول واسم العائلة</li>
+        <li>عنوان البريد الإلكتروني</li>
+        <li>تاريخ الميلاد</li>
+        <li>المحتوى المُنشأ (اختبارات، ملخصات، بطاقات، خطط)</li>
+        <li>بيانات الاستخدام (عدد الطلبات، الملفات المستوردة)</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>2. استخدام البيانات</h2>
+      <p>تُستخدم بياناتك من أجل:</p>
+      <ul>
+        <li>تقديم خدماتنا وتحسينها</li>
+        <li>تخصيص تجربتك</li>
+        <li>إدارة حسابك واشتراكك</li>
+        <li>إرسال إشعارات مهمة</li>
+        <li>ضمان أمان المنصة</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>3. مشاركة البيانات</h2>
+      <p>لا يبيع StudyAI بياناتك الشخصية أبدًا. قد نشارك بياناتك فقط مع:</p>
+      <ul>
+        <li>Firebase (Google) للتخزين والمصادقة</li>
+        <li>OpenAI لتوليد محتوى الذكاء الاصطناعي</li>
+        <li>RevenueCat لإدارة الاشتراكات</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>4. حماية القاصرين</h2>
+      <p>بالنسبة للمستخدمين دون سن 13 عامًا، نطلب موافقة أحد الوالدين قبل تفعيل الحساب. يتم التعامل مع بيانات القاصرين بعناية خاصة ولا تُستخدم أبدًا لأغراض تجارية.</p>
+    </div>
+
+    <div class="section">
+      <h2>5. الأمان</h2>
+      <p>نستخدم تدابير أمنية قياسية لحماية بياناتك:</p>
+      <ul>
+        <li>تشفير SSL/TLS</li>
+        <li>مصادقة Firebase</li>
+        <li>قواعد Firestore صارمة</li>
+        <li>حذف تلقائي للحسابات غير المُتحقق منها بعد 24 ساعة</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>6. حقوقك</h2>
+      <p>لديك الحق في:</p>
+      <ul>
+        <li>الوصول إلى بياناتك الشخصية</li>
+        <li>تعديل معلوماتك من شاشة الملف الشخصي</li>
+        <li>حذف حسابك وجميع بياناتك</li>
+        <li>التواصل مع فريقنا لأي طلب</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>7. التواصل</h2>
+      <p>لأي أسئلة تتعلق بهذه السياسة:<br>
+      <a href="mailto:mindforge.studio.dev@gmail.com" style="color:#6366F1">mindforge.studio.dev@gmail.com</a></p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  © 2025 StudyAI — MindForge Studio · All rights reserved
+</footer>
+
+<script>
+  function setLang(lang) {
+    ['fr', 'en', 'ar'].forEach(l => {
+      document.getElementById('lang-' + l).classList.add('hidden');
+    });
+    document.getElementById('lang-' + lang).classList.remove('hidden');
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+</script>
+
+</body>
+</html>
