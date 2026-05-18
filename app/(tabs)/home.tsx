@@ -13,6 +13,8 @@ import { useLanguageStore } from "../../store/languageStore";
 import { useUsageStore } from "../../store/usageStore";
 import { LIMITS } from "../../types/usage";
 import { LinearGradient } from "expo-linear-gradient";
+import { useThemeStore } from "../../store/themeStore";
+import { Colors } from "../../constants/colors";
 
 const { width } = Dimensions.get("window");
 
@@ -40,6 +42,8 @@ export default function HomeScreen() {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguageStore();
   const { usage } = useUsageStore();
+  const { isDark } = useThemeStore();
+  const C = isDark ? Colors.dark : Colors.light;
   const isRTL = currentLanguage === "ar";
 
   const greeting = storedFirstName
@@ -59,16 +63,21 @@ export default function HomeScreen() {
     ? Math.max(0, LIMITS[usage.plan] - usage.count)
     : null;
 
+  // Gradients hero : légèrement différents en dark
+  const heroGradient: [string, string] = isDark
+    ? ["#3730A3", "#5B21B6"]
+    : ["#6366F1", "#8B5CF6"];
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F9FA" }}>
-      <StatusBar barStyle="light-content" />
+    <SafeAreaView style={{ flex: 1, backgroundColor: C.background }}>
+      <StatusBar barStyle={isDark ? "light-content" : "light-content"} />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 32 }}
       >
         {/* ── Hero Header ── */}
         <LinearGradient
-          colors={["#6366F1", "#8B5CF6"]}
+          colors={heroGradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
@@ -189,7 +198,7 @@ export default function HomeScreen() {
           justifyContent: "space-between", alignItems: "center",
         }}>
           <Text style={{
-            fontSize: 20, fontWeight: "800", color: "#111827",
+            fontSize: 20, fontWeight: "800", color: C.text,
             textAlign: isRTL ? "right" : "left",
           }}>
             {currentLanguage === "ar" ? "🚀 أدوات الذكاء الاصطناعي"
@@ -212,9 +221,9 @@ export default function HomeScreen() {
                 width: (width - 44) / 2,
                 borderRadius: 20, overflow: "hidden",
                 elevation: 4,
-                shadowColor: "#6366F1",
+                shadowColor: isDark ? "#000" : "#6366F1",
                 shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.15,
+                shadowOpacity: isDark ? 0.4 : 0.15,
                 shadowRadius: 8,
                 height: 150,
               }}

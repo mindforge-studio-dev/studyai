@@ -15,6 +15,9 @@ import { getFirestore, doc, getDoc, collection, getDocs, query, where } from "fi
 import { router } from "expo-router";
 import { useUsageStore } from "../../store/usageStore";
 import { LIMITS, FILE_LIMITS } from "../../types/usage";
+import { useThemeStore } from "../../store/themeStore";
+import { Colors } from "../../constants/colors";
+import { Switch } from "react-native";
 
 export default function ProfileScreen() {
   const { user, logout } = useAuthStore();
@@ -22,6 +25,8 @@ export default function ProfileScreen() {
   const { t } = useTranslation();
   const isRTL = currentLanguage === "ar";
   const { usage } = useUsageStore();
+  const { isDark, mode, setMode } = useThemeStore();
+const C = isDark ? Colors.dark : Colors.light;
 
   const [showLangModal, setShowLangModal] = useState(false);
   const [changingLang, setChangingLang] = useState(false);
@@ -173,7 +178,7 @@ export default function ProfileScreen() {
   ];
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#F8F9FA" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: C.background }}>
       <ScrollView contentContainerStyle={{ padding: 20, paddingBottom: 100 }}>
 
         {/* Header */}
@@ -334,6 +339,70 @@ export default function ProfileScreen() {
     </Text>
   </TouchableOpacity>
 )}
+
+{/* Apparence / Dark Mode */}
+<View style={{
+  backgroundColor: C.card, borderRadius: 14,
+  borderWidth: 1, borderColor: C.border,
+  marginBottom: 16, overflow: "hidden",
+}}>
+  <Text style={{
+    fontSize: 13, fontWeight: "700", color: C.textSecondary,
+    letterSpacing: 0.5, padding: 16, paddingBottom: 8,
+    textAlign: isRTL ? "right" : "left",
+  }}>
+    🎨 {getLabel("APPARENCE", "APPEARANCE", "المظهر")}
+  </Text>
+
+  {/* Toggle Dark Mode */}
+  <View style={{
+    flexDirection: isRTL ? "row-reverse" : "row",
+    alignItems: "center", padding: 16,
+    borderTopWidth: 1, borderTopColor: C.border,
+  }}>
+    <View style={{
+      width: 36, height: 36, borderRadius: 10,
+      backgroundColor: isDark ? "#1E1B4B" : "#EEF2FF",
+      alignItems: "center", justifyContent: "center",
+      marginRight: isRTL ? 0 : 12, marginLeft: isRTL ? 12 : 0,
+    }}>
+      <Ionicons name={isDark ? "moon" : "sunny-outline"} size={18} color={C.primary} />
+    </View>
+    <View style={{ flex: 1 }}>
+      <Text style={{ fontSize: 14, color: C.text, fontWeight: "500", textAlign: isRTL ? "right" : "left" }}>
+        {getLabel("Mode sombre", "Dark mode", "الوضع الداكن")}
+      </Text>
+      <Text style={{ fontSize: 12, color: C.textSecondary, marginTop: 2, textAlign: isRTL ? "right" : "left" }}>
+        {mode === "system"
+          ? getLabel("Suit le système", "Follows system", "يتبع النظام")
+          : isDark
+          ? getLabel("Activé manuellement", "Enabled manually", "مفعّل يدوياً")
+          : getLabel("Désactivé manuellement", "Disabled manually", "معطّل يدوياً")}
+      </Text>
+    </View>
+    <Switch
+      value={isDark}
+      onValueChange={(val) => setMode(val ? "dark" : "light")}
+      trackColor={{ false: C.border, true: C.primary }}
+      thumbColor="#FFFFFF"
+    />
+  </View>
+
+  {/* Bouton "Suivre le système" — visible si mode manuel */}
+  {mode !== "system" && (
+    <TouchableOpacity
+      onPress={() => setMode("system")}
+      style={{
+        padding: 12, alignItems: "center",
+        borderTopWidth: 1, borderTopColor: C.border,
+      }}
+    >
+      <Text style={{ fontSize: 13, color: C.primary, fontWeight: "600" }}>
+        {getLabel("↺ Suivre le système", "↺ Follow system", "↺ اتبع النظام")}
+      </Text>
+    </TouchableOpacity>
+  )}
+</View>
 
         {/* Menu items */}
         <View style={{

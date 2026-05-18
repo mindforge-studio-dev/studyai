@@ -1,7 +1,7 @@
 // app/_layout.tsx
 import "../i18n";
 import { useEffect, useState } from "react";
-import { LogBox, View, Text, ActivityIndicator } from "react-native";
+import { LogBox, View, Text, ActivityIndicator, Appearance } from "react-native";
 import { Stack, router, useSegments } from "expo-router";
 import { useAuthStore } from "@/store/authStore";
 import { useUsageStore } from "@/store/usageStore";
@@ -12,6 +12,8 @@ import { trackConversion } from "../services/analytics";
 import { Ionicons } from "@expo/vector-icons";
 import { OfflineBanner } from "../components/OfflineBanner";
 import { useOnboardingStore } from "../store/onboardingStore";
+import { useThemeStore } from "../store/themeStore";
+import { Colors } from "../constants/colors";
 
 LogBox.ignoreLogs([
   "Do not call Hooks inside useEffect",
@@ -27,6 +29,9 @@ export default function RootLayout() {
   const { loadSettings } = useNotificationStore();
   const { currentLanguage } = useLanguageStore();
   const { onboardingDone, checkOnboarding } = useOnboardingStore();
+  const { isDark, syncWithSystem } = useThemeStore();
+
+  const C = isDark ? Colors.dark : Colors.light;
 
   useEffect(() => {
     const unsubscribe = initialize();
@@ -35,6 +40,14 @@ export default function RootLayout() {
 
   useEffect(() => {
     checkOnboarding();
+  }, []);
+
+  // Écouter les changements système
+  useEffect(() => {
+    const sub = Appearance.addChangeListener(() => {
+      syncWithSystem();
+    });
+    return () => sub.remove();
   }, []);
 
   useEffect(() => {
@@ -75,24 +88,24 @@ export default function RootLayout() {
 
   if (!isInitialized || onboardingDone === null) {
     return (
-      <View style={{ flex: 1, backgroundColor: "#F8F9FA", alignItems: "center", justifyContent: "center" }}>
+      <View style={{ flex: 1, backgroundColor: C.background, alignItems: "center", justifyContent: "center" }}>
         <View style={{
           width: 72, height: 72, borderRadius: 20,
-          backgroundColor: "#6366F1", alignItems: "center",
+          backgroundColor: C.primary, alignItems: "center",
           justifyContent: "center", marginBottom: 24,
         }}>
           <Ionicons name="school" size={36} color="#FFFFFF" />
         </View>
-        <Text style={{ fontSize: 28, fontWeight: "800", color: "#111827", marginBottom: 8 }}>
+        <Text style={{ fontSize: 28, fontWeight: "800", color: C.text, marginBottom: 8 }}>
           StudyAI
         </Text>
-        <ActivityIndicator size="large" color="#6366F1" style={{ marginTop: 16 }} />
+        <ActivityIndicator size="large" color={C.primary} style={{ marginTop: 16 }} />
       </View>
     );
   }
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: C.background }}>
       <OfflineBanner />
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="onboarding" />
